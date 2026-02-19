@@ -18,7 +18,7 @@ st.set_page_config(
 # Load assets (image)
 # ---------------------------------
 st.image(
-    "assets/ADHD.png",
+    "ADHD.png",
     use_column_width=True
 )
 
