@@ -1,8 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import joblib
-import pickle
+from sklearn.ensemble import RandomForestClassifier
 from collections import defaultdict
 
 # ---------------------------------
@@ -15,12 +14,9 @@ st.set_page_config(
 )
 
 # ---------------------------------
-# Load assets (image)
+# Load image safely
 # ---------------------------------
-st.image(
-    "ADHD.png",
-    use_column_width=True
-)
+st.image("ADHD.png", use_column_width=True)
 
 # ---------------------------------
 # Title & Description
@@ -39,19 +35,44 @@ st.markdown(
 st.divider()
 
 # ---------------------------------
-# Load models
+# Train model dynamically (SAFE DEPLOYMENT)
 # ---------------------------------
-rf_model = joblib.load("models/rf_model.pkl")
+@st.cache_resource
+def train_model():
+    data = pd.read_csv("data/synthetic_adhd_task_data.csv")
 
-with open("models/q_table.pkl", "rb") as f:
-    loaded_Q = pickle.load(f)
+    # Convert categorical features
+    data = pd.get_dummies(data, columns=["task_type", "previous_task_type"])
 
-Q = defaultdict(lambda: np.zeros(4), loaded_Q)
+    X = data.drop("completed", axis=1)
+    y = data["completed"]
+
+    model = RandomForestClassifier()
+    model.fit(X, y)
+
+    return model, X.columns
+
+
+rf_model, model_columns = train_model()
+
+# ---------------------------------
+# Initialize Q-table safely
+# ---------------------------------
+Q = defaultdict(lambda: np.zeros(4))
 
 # ---------------------------------
 # Helper functions
 # ---------------------------------
 def recommend_action(task_row, model):
+    task_row = pd.get_dummies(task_row)
+
+    # Ensure same columns as training
+    for col in model_columns:
+        if col not in task_row:
+            task_row[col] = 0
+
+    task_row = task_row[model_columns]
+
     prob = model.predict_proba(task_row)[0, 1]
 
     if prob >= 0.7:
