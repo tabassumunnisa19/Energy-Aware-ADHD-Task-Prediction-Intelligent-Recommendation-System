@@ -70,6 +70,8 @@ Adhd_AI_scheduler_app/
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
+
+```
 ----
 
 🛠 Tech Stack
@@ -81,12 +83,15 @@ Streamlit
 Reinforcement Learning (Q-Learning)
 
 ----
+
 ⚠️ Ethical Disclaimer
 
 
 This project is not a medical diagnostic tool.
 It is a productivity-support system designed for behavioral adaptation.
+
 ---
+
 🌍 Future Improvements
 
 Real user data integration
@@ -96,10 +101,11 @@ Performance tracking dashboard
 Personalized AI fine-tuning
 
 ---
+
 👩‍💻 Author
 
 Tabassum Unnisa
 
 AI Developer | Data Scientist | ML Enthusiast
-## 🧩 Project Structure
+
 
